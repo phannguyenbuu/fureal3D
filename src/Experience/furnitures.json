@@ -1,0 +1,18 @@
+{
+  "bedroom": [
+    {
+      "type": "bed",
+      "file": "/models/Light Room/obj/Bed.glb",
+      "preview": "/models/Light Room/preview/kingbed-001.jpg",
+      "name": "Kingbed 2mx2m",
+      "color": "bw"
+    },
+    {
+      "type": "tab",
+      "file": "/models/Light Room/obj/Bedtab.glb",
+      "preview": "/models/Light Room/preview/bedtab-001.jpg",
+      "name": "Bedtab",
+      "color": "bw"
+    }
+  ]
+}
