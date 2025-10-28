@@ -9,7 +9,7 @@ import Menu from "./components/Menu/Menu";
 import Router from "./routes/Router";
 import Overlay from "./components/Overlay/Overlay";
 import Logo from "./components/Logo/Logo";
-import { SelectionProvider } from "./stores/selectionStore";
+import { SelectionProvider, PointerProvider } from "./stores/selectionStore";
 
 function App() {
   const { updateDimensions } = useResponsiveStore();
@@ -23,16 +23,18 @@ function App() {
   }, []);
 
   return (
-    <SelectionProvider>
-      {/* <Menu /> */}
-      {/* <Logo /> */}
-      <LoadingPage />
-      <RoomToggleButton />
-      <Overlay />
-      <Router />
-      
-      <Experience />
-    </SelectionProvider>
+    <PointerProvider>
+      <SelectionProvider>
+        {/* <Menu /> */}
+        {/* <Logo /> */}
+        <LoadingPage />
+        <RoomToggleButton />
+        <Overlay />
+        <Router />
+        
+        <Experience />
+      </SelectionProvider>
+    </PointerProvider>
   );
 }
 

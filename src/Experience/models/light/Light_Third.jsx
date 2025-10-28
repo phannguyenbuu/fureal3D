@@ -124,7 +124,7 @@ export const UVWPlaneYZ = (node) => {
 
 
 export default function Model(props) {
-  const { nodes, materials } = useGLTF("/models/Light Room/SampleRoom.glb");
+  const { nodes, materials } = useGLTF("/models/Light Room/boxroom.glb");
   const groupRef = useRef();
 
   const newMaterials = convertMaterialsToBasic(materials);
@@ -135,31 +135,34 @@ export default function Model(props) {
   }
 
   useEffect(() => {
-    Object.values(nodes).forEach((node) => {
-      console.log("Node", node.name);
+    // Object.values(nodes).forEach((node) => {
+    //   console.log("Node", node.name);
 
-      if (isNode(node))
-      {
+    //   if (isNode(node)) {
+    //     // Lấy bounding box của node
+    //     const bbox = new THREE.Box3().setFromObject(node);
+    //     console.log("Bounding Box Min:", bbox.min);
+    //     console.log("Bounding Box Max:", bbox.max);
 
-        if(node.name==="SampleRoom_Room_1")
-          UVWPlaneXZ(node);
-        else if(node.name==="SampleRoom_Room_4")
-          UVWPlaneXZ(node);
-        else if(node.name==="SampleRoom_Room_5") //Door
-          UVWPlaneYZ(node);
-        else if(node.name==="SampleRoom_Room_6")
-          UVWPlaneXZ(node);
-      }
-    });
+    //     if(node.name === "SampleRoom_Room_1")
+    //       UVWPlaneXZ(node);
+    //     else if(node.name === "SampleRoom_Room_4")
+    //       UVWPlaneXZ(node);
+    //     else if(node.name === "SampleRoom_Room_5") //Door
+    //       UVWPlaneYZ(node);
+    //     else if(node.name === "SampleRoom_Room_6")
+    //       UVWPlaneXZ(node);
+    //   }
+    // });
 
-    Object.values(materials).forEach(mtl => {
-      // xử lý materials nếu cần
-    });
+    // Object.values(materials).forEach(mtl => {
+    //   console.log('mtl',mtl);
+    // });
   }, [nodes]);
 
   return (
     <group {...props} dispose={null} ref={groupRef} 
-      scale={[1,1,1]} position={[2.5,0,-2.5]} castShadow receiveShadow>
+      scale={[1,1,1]} position={[2,0,-2.5]} castShadow receiveShadow>
         
         
       {/* <mesh
@@ -213,3 +216,7 @@ export default function Model(props) {
 }
 
 useGLTF.preload("/models/Light Room/Light_Third.glb");
+useGLTF.preload("/models/Light Room/obj/Bed.glb");
+useGLTF.preload("/models/Light Room/obj/Bedtab.glb");
+useGLTF.preload("/models/Light Room/obj/Bench.glb");
+useGLTF.preload("/models/Light Room/obj/direction.glb");

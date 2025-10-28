@@ -5,16 +5,16 @@ import DarkRoomFirst from "./models/dark/Dark_First";
 import DarkRoomSecond from "./models/dark/Dark_Second";
 import DarkRoomThird from "./models/dark/Dark_Third";
 import DarkRoomFourth from "./models/dark/Dark_Fourth";
-import LightRoomFirst from "./models/light/Light_First";
+import LightRoomFirst from "./models/light/DirectionArrow";
 import LightRoomSecond from "./models/light/Light_Second";
 import LightRoomThird from "./models/light/Light_Third";
 import LightRoomFourth from "./models/light/Light_Fourth";
 import DarkTargets from "./models/dark/Dark_Targets";
 import LightTargets from "./models/light/Light_Targets";
 import GridPlanes from "./components/GridPlanes";
-
+import DirectionArrow from "./models/light/DirectionArrow";
 import { useToggleRoomStore } from "../stores/toggleRoomStore";
-
+import { usePointer, useSelection } from "../stores/selectionStore";
 import gsap from "gsap";
 
 import { useFrame } from "@react-three/fiber";
@@ -27,6 +27,7 @@ const Scene = ({ pointerRef }) => {
   const lightRoomGroupPosition = new THREE.Vector3(24.79, 0, 0.173);
   const groupRotationRef = useRef(0);
   const { isDarkRoom } = useToggleRoomStore();
+  const { directionAxis} = usePointer();
 
   useEffect(() => {
     if (!gridPlanesRef.current) return;
@@ -74,7 +75,7 @@ const Scene = ({ pointerRef }) => {
           
 
 
-          <LightRoomFirst
+          {/* <LightRoomFirst
             position={[
               -lightRoomGroupPosition.x,
               -lightRoomGroupPosition.y,
@@ -87,7 +88,7 @@ const Scene = ({ pointerRef }) => {
               -lightRoomGroupPosition.y,
               -lightRoomGroupPosition.z,
             ]}
-          />
+          /> */}
           <LightRoomThird
             position={[
               -lightRoomGroupPosition.x,
@@ -95,13 +96,13 @@ const Scene = ({ pointerRef }) => {
               -lightRoomGroupPosition.z,
             ]}
           />
-          <LightRoomFourth
+          {/* <LightRoomFourth
             position={[
               -lightRoomGroupPosition.x,
               -lightRoomGroupPosition.y,
               -lightRoomGroupPosition.z,
             ]}
-          />
+          /> */}
           {/* <LightTargets
             position={[
               -lightRoomGroupPosition.x,
@@ -109,10 +110,13 @@ const Scene = ({ pointerRef }) => {
               -lightRoomGroupPosition.z,
             ]}
           /> */}
+
+          <DirectionArrow position={[2.5,0,-2]} scale={[2.5,1,2.5]} 
+            rotation={[0,directionAxis/180 * Math.PI,0]}/>
         </group>
 
         <group ref={lightGroupRef} position={lightRoomGroupPosition}>
-          <DarkRoomFirst />
+          {/* <DarkRoomFirst /> */}
           {/* <DarkRoomSecond />
           <DarkRoomThird />
           <DarkRoomFourth />

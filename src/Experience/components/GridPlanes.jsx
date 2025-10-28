@@ -8,15 +8,44 @@ import { useFrame, useThree } from "@react-three/fiber";
 import { OrthographicCamera, Box, useGLTF, ContactShadows, useTexture, Decal } from '@react-three/drei';
 import { PointerHighlight } from "../PanelFurnitures";
 
-import { useSelection } from "../../stores/selectionStore";
+import { useSelection, usePointer } from "../../stores/selectionStore";
 
 const planeZ = 0.001;
 
-const Plane = ({ position, planeDepth, planeWidth, setPointerPosition, setAddedHighlights }) => {
+const Plane = ({ row, column, position, planeDepth, planeWidth, 
+  setPointerPosition, setAddedHighlights, modelFile, data}) => {
+
+  const { setMessage, currentLibNodeSelection, 
+    setCurrentLibNodeSelection, 
+    currentSelection, setCurrentSelection
+    
+  } = useSelection();
+
+  const {directionAxis, setDirectionAxis, getResult} = usePointer();
+
+
   const meshRef = useRef();
+  const {setPointer, setPointerIdPosition} = usePointer();
   const [hovered, setHovered] = useState(false);
   const [opacity, setOpacity] = useState(0);
   const { isDarkRoom, isTransitioning } = useToggleRoomStore();
+  const {rotationIndex} = usePointer();
+
+  useEffect(() => {
+
+    // setMessage("Parse data");
+    if(!data || !data.zone || data.zone.length !== 4) return;
+    
+    if(!(row >= data.zone[0] && row <= data.zone[2] 
+      && column >= data.zone[1] && column <= data.zone[3] )
+    )
+    {
+      // setMessage(`Vật thể không nằm trong phòng ${data.zone} ${row} ${column}`);
+    }else{
+      // setMessage(`Vị trí thích hợp ${rotationIndex} ${directionAxis}`);
+    }
+    
+    },[hovered]);
 
   const material = useMemo(() => {
     return new THREE.MeshStandardMaterial({
@@ -58,6 +87,11 @@ const Plane = ({ position, planeDepth, planeWidth, setPointerPosition, setAddedH
     setOpacity(THREE.MathUtils.lerp(opacity, targetOpacity, lerpFactor));
     meshRef.current.material.opacity = opacity;
     meshRef.current.emissiveIntensity = hovered ? 1.5 : 0.8;
+
+
+    const bbox = new THREE.Box3().setFromObject(meshRef.current);
+    // console.log("Point Box Min:", bbox.min);
+    // console.log("Point Box Max:", bbox.max);
   });
 
   return (
@@ -69,6 +103,7 @@ const Plane = ({ position, planeDepth, planeWidth, setPointerPosition, setAddedH
       material={material}
       onPointerMove={() => {
         if (isTransitioning) return;
+        // setMessage(`${row}-${column}`);
         setPointerPosition(position);
         setHovered(true);
       }}
@@ -76,42 +111,54 @@ const Plane = ({ position, planeDepth, planeWidth, setPointerPosition, setAddedH
         setHovered(false);
       }}
       onClick={() => {
-        setAddedHighlights((current) => {
-          // Kiểm tra có phần tử nào trong current có vị trí trùng với position không
-          const exists = current.some(
-            (pos) =>
-              Math.abs(pos[0] - position[0]) < 0.001 &&
-              Math.abs(pos[1] - position[1]) < 0.001 &&
-              Math.abs(pos[2] - position[2]) < 0.001
-          );
-          if (exists) {
-            return current; // Nếu đã tồn tại, không thêm
+        // console.log("OnClick", currentLibNodeSelection, currentSelection);
+        if(!currentLibNodeSelection)
+        {
+          if(currentSelection)
+          {
+            setPointerIdPosition(currentSelection, position);
+            
           }
-          return [...current, position]; // Thêm vị trí mới nếu chưa tồn tại
-        });
+        }else{
+
+          setAddedHighlights((current) => {
+            const index = current.findIndex(
+              (item) =>
+                Math.abs(item.position[0] - position[0]) < 0.001 &&
+                Math.abs(item.position[1] - position[1]) < 0.001 &&
+                Math.abs(item.position[2] - position[2]) < 0.001
+            );
+
+            if (index !== -1) {
+              const newHighlights = [...current];
+              newHighlights[index] = {
+                ...newHighlights[index],
+                data: data,
+                rotationIndex: rotationIndex,
+              };
+              setPointer(current);
+              
+              return newHighlights;
+            } else {
+              const uniqueId = `${data.name}-${Date.now()}`;
+              const newList = [...current, { id: uniqueId, position, modelFile, data, rotationIndex: 0 }];
+              setPointer(newList[newList.length - 1]);
+              return newList;
+            }
+          });
+          
+        }
+
+        setCurrentSelection(null);
+        setCurrentLibNodeSelection(null);
       }}
+
 
     >
       <planeGeometry args={[planeDepth, planeWidth]} />
-      
-      
     </mesh>
   );
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 const GridPlanes = ({
   position,
@@ -122,14 +169,46 @@ const GridPlanes = ({
   spacing,
   ref,
 }) => {
-  const [addedHighlights, setAddedHighlights] = useState([]);
+  
+  const { currentLibNodeSelection, setCurrentLibNodeSelection, currentSelection  } = useSelection();
+  const { setPointer} = usePointer();
+  const {addedHighlights, setAddedHighlights} = usePointer();
+  const pointerRef = useRef();
   const [pointerPosition, setPointerPosition] = useState([0, 0, 0]);
+
+  const [selectedHighlightIndex, setSelectedHighlightIndex] = useState(null);
+  // const [pointerPosition, setPointerPosition] = useState([0, 0, 0]);
+  const [currentModelFile, setCurrentModelFile] = useState(null);
+  const [rotationIndex, setRotationIndex] = useState(0);
+  // const [addedHighlights, setAddedHighlights] = useState([]);
+
+  const onSelectHighlight = (index) => {
+    const highlight = addedHighlights[index];
+
+    // Xóa phần tử khỏi danh sách
+    setAddedHighlights((prev) => prev.filter((_, i) => i !== index));
+
+    // Lưu lại ở pointer chính các giá trị để chỉnh sửa
+    setSelectedHighlightIndex(index);
+    setPointerPosition(highlight.position);
+    setCurrentModelFile(highlight.modelFile);
+    setRotationIndex(highlight.rotationIndex || 0);
+  }
+
+
 
   const gridWidth = columns * (planeWidth + spacing) - spacing;
   const gridDepth = columns * (planeDepth + spacing) - spacing;
 
   const startX = planeWidth / 2 - gridWidth / 2;
   const startZ = planeDepth / 2 - gridDepth / 2;
+
+  useEffect(() => {
+    if (pointerRef.current) {
+      setPointer(pointerRef.current);
+    }
+  }, [pointerRef.current, currentLibNodeSelection]);
+
 
   return (
     <>
@@ -141,21 +220,35 @@ const GridPlanes = ({
             return (
               <Plane
                 key={`plane-${row}-${column}`}
+                id={`plane-${row}-${column}`}
+                row = {row} column={column}
                 planeDepth={planeDepth}
                 planeWidth={planeWidth}
                 position={[x, planeZ, z]}
                 setPointerPosition={setPointerPosition}
                 setAddedHighlights={setAddedHighlights}
+                modelFile={currentLibNodeSelection?.file}
+                data={currentLibNodeSelection}
               />
             );
           })
         )}
 
-        <PointerHighlight pointer={pointerPosition} />
+        {currentLibNodeSelection  &&
+        <PointerHighlight ref={pointerRef} rotationIndex={rotationIndex}
+           pointer={pointerPosition} modelFile={currentLibNodeSelection?.file}/>}
 
-        {addedHighlights.map((pos, index) => (
+        {/* {addedHighlights.map((pos, index) => (
           <PointerHighlight key={index} pointer={pos} />
+        ))} */}
+
+        {addedHighlights.map(({id, position, modelFile, rotationIndex }, index) => (
+          <PointerHighlight key={index} id={id} pointer={position} modelFile={modelFile} 
+            rotationIndex={rotationIndex}
+            onClick={() => onSelectHighlight(index)}
+          />
         ))}
+
 
       </group>
 

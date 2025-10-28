@@ -4,14 +4,58 @@
       "type": "bed",
       "file": "/models/Light Room/obj/Bed.glb",
       "preview": "/models/Light Room/preview/kingbed-001.jpg",
-      "name": "Kingbed 2mx2m",
+      "name": "Giường",
+      "zone": [2,10,9,17],
       "color": "bw"
     },
     {
       "type": "tab",
       "file": "/models/Light Room/obj/Bedtab.glb",
       "preview": "/models/Light Room/preview/bedtab-001.jpg",
-      "name": "Bedtab",
+      "name": "Tủ đầu giường",
+      "color": "bw"
+    },
+    {
+      "type": "bench",
+      "file": "/models/Light Room/obj/Bench.glb",
+      "preview": "/models/Light Room/preview/bench.jpg",
+      "name": "Băng ngồi",
+      "color": "bw"
+    },
+    {
+      "type": "table",
+      "file": "/models/Light Room/obj/WorkTable.glb",
+      "preview": "/models/Light Room/preview/worktable.jpg",
+      "name": "Bàn làm việc",
+      "color": "bw"
+    }
+    ,
+    {
+      "type": "chair",
+      "file": "/models/Light Room/obj/Readchair.glb",
+      "preview": "/models/Light Room/preview/readchair.jpg",
+      "name": "Ghế đọc sách",
+      "color": "bw"
+    },
+    {
+      "type": "wardrobe",
+      "file": "/models/Light Room/obj/Wardrobe1m2.glb",
+      "preview": "/models/Light Room/preview/wardrobe1m2.jpg",
+      "name": "Tủ âm tường 1m2",
+      "color": "bw"
+    },
+    {
+      "type": "wardrobe",
+      "file": "/models/Light Room/obj/Wardrobe2m4.glb",
+      "preview": "/models/Light Room/preview/wardrobe2m4.jpg",
+      "name": "Tủ âm tường 2m4",
+      "color": "bw"
+    },
+    {
+      "type": "wardrobe",
+      "file": "/models/Light Room/obj/Wardrobe3m6.glb",
+      "preview": "/models/Light Room/preview/wardrobe3m6.jpg",
+      "name": "Tủ âm tường 3m6",
       "color": "bw"
     }
   ]

@@ -90,7 +90,7 @@ const LoadingScreen = () => {
       <div ref={bottomHalfRef} className="background-bottom-half"></div>
       <div className="loading-screen-info-container">
         <div ref={messageRef} className="intro-message-container">
-          welcome.
+          <img src="/images/logo-trang.png" style={{width:200}} alt="Logo" />
         </div>
         <div className="loading-bar-container">
           <div
